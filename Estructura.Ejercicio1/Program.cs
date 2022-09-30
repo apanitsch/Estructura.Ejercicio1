@@ -39,4 +39,6 @@ while (true)
         //esto no debería pasar nunca => si pasa tiro un error.
         throw new ApplicationException("Opción inválida");
     }
+
+    Console.WriteLine();
 }

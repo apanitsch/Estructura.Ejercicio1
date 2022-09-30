@@ -15,10 +15,10 @@ internal static class RegistroPersonas
         //y grabar ese objeto en una lista.
         var persona = new Persona();
 
-        persona.Documento = Usuario.PedirEntero(min: 1_000_000, max: 99_999_999);
-        persona.Nombre = Usuario.PedirCadena(max: 30);
-        persona.Apellido = Usuario.PedirCadena(max: 30);
-        persona.FechaNacimiento = Usuario.PedirFecha(max: DateTime.Now); //el enunciado dice "menor a la actual"
+        persona.Documento = Usuario.PedirEntero("Número de documento:", min: 1_000_000, max: 99_999_999);
+        persona.Nombre = Usuario.PedirCadena("Nombre:", max: 30);
+        persona.Apellido = Usuario.PedirCadena("Apellido:", max: 30);
+        persona.FechaNacimiento = Usuario.PedirFecha("Fecha de nacimiento: ", max: DateTime.Now); //el enunciado dice "menor a la actual"
 
         //mas validaciones acá.
         //ejercicio: que no exista....        
@@ -26,12 +26,13 @@ internal static class RegistroPersonas
 
         //guardar en memoria.
         personas.Add(persona);
+
+        Console.WriteLine("Se ha ingresado la nueva persona correctamente.");
     }
 
     public static void Baja()
-    {
-        Console.WriteLine("Ingrese nro. de doc. a dar de baja.");
-        int documentoBaja = Usuario.PedirEntero(min: 1_000_000, max: 99_999_999);
+    {        
+        int documentoBaja = Usuario.PedirEntero("Ingrese nro. de doc. a dar de baja:", min: 1_000_000, max: 99_999_999);
 
         //forma corta (ejercicio:entender la linea)
         //personas.Remove(personas.Single(p => p.Documento == documentoBaja));
@@ -40,7 +41,8 @@ internal static class RegistroPersonas
         {
             if (persona.Documento == documentoBaja)
             {
-                personas.Remove(persona);
+                Console.WriteLine($"Se ha encontrado y dado de baja a {persona.Nombre} {persona.Apellido}.");
+                personas.Remove(persona);                
                 return;
             }
         }
@@ -57,15 +59,21 @@ internal static class RegistroPersonas
         //La palabra clave "using" le dice a .Net que cierre el archivo
         //tan pronto como termine este método.
         //(Que NO espere al "recolector de basura" para hacerlo).
+        //Si existe lo sobreescribe.
         using var archivoPersonas = new StreamWriter("Personas.txt");     
         
         //archivoPersonas tiene métodos MUY parecidos a los de la consola.
         //Write, WriteLine, etc...
         foreach(var persona in personas)
         {
+            //por ejemplo:
+            //25705447|Lorena|Lopez|11/12/2008
+
             var linea = $"{persona.Documento}|{persona.Nombre}|{persona.Apellido}|{persona.FechaNacimiento}";
             archivoPersonas.WriteLine(linea);
         }
+
+        Console.WriteLine("El archivo se ha grabado correctamente.");
     }
 
     internal static void Cargar()
@@ -76,7 +84,14 @@ internal static class RegistroPersonas
         using var archivoPersonas = new StreamReader("Personas.txt");
         while (!archivoPersonas.EndOfStream)
         {
+            //por ejemplo:
+            //25705447|Lorena|Lopez|11/12/2008
+
             string proximaLinea = archivoPersonas.ReadLine();
+
+            //datosSeparados va a ser (siguiendo el ejemplo)
+            //datosSeparados va  a ser igual a:
+            //["25705447", "Lorena", "Lopez", "11/12/2008"]
             string[] datosSeparados = proximaLinea.Split('|');
 
             var persona = new Persona();
@@ -87,6 +102,8 @@ internal static class RegistroPersonas
 
             personas.Add(persona);
         }
+
+        Console.WriteLine("Se han cargado los datos del archivo correctamente.");
     }
 
     internal static void MostrarLista()
